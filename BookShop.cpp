@@ -1,35 +1,40 @@
-// Omkar Nath Singh
 #include <iostream>
-#include <string.h>
-#include <stdlib.h>
+#include <cstring> // Use cstring instead of string.h
+#include <cstdlib> // Use cstdlib instead of stdlib.h
 
 using namespace std;
 
-class book
-{
+class book {
 private:
     char *author, *title, *publisher;
     float *price;
     int *stock;
 
 public:
-    book()
-    {
+    book() {
         author = new char[20];
         title = new char[20];
         publisher = new char[20];
         price = new float;
         stock = new int;
     }
+
+    ~book() {
+        delete[] author;
+        delete[] title;
+        delete[] publisher;
+        delete price;
+        delete stock;
+    }
+
     void feeddata();
     void editdata();
     void showdata();
-    int search(char[], char[]);
+    int search(const char[], const char[]);
     void buybook();
 };
 
-void book::feeddata()
-{
+void book::feeddata() {
     cin.ignore();
     cout << "\nEnter Author Name: ";
     cin.getline(author, 20);
@@ -43,9 +48,8 @@ void book::feeddata()
     cin >> *stock;
 }
 
-void book::editdata()
-{
-
+void book::editdata() {
+    cin.ignore();
     cout << "\nEnter Author Name: ";
     cin.getline(author, 20);
     cout << "Enter Title Name: ";
@@ -58,8 +62,7 @@ void book::editdata()
     cin >> *stock;
 }
 
-void book::showdata()
-{
+void book::showdata() {
     cout << "\nAuthor Name: " << author;
     cout << "\nTitle Name: " << title;
     cout << "\nPublisher Name: " << publisher;
@@ -67,36 +70,28 @@ void book::showdata()
     cout << "\nStock Position: " << *stock;
 }
 
-int book::search(char tbuy[20], char abuy[20])
-{
-    if (strcmp(tbuy, title) == 0 && strcmp(abuy, author) == 0)
-        return 1;
-    else
-        return 0;
+int book::search(const char tbuy[20], const char abuy[20]) {
+    return (strcmp(tbuy, title) == 0 && strcmp(abuy, author) == 0);
 }
 
-void book::buybook()
-{
+void book::buybook() {
     int count;
     cout << "\nEnter Number Of Books to buy: ";
     cin >> count;
-    if (count <= *stock)
-    {
-        *stock = *stock - count;
-        cout << "\nBooks Bought Sucessfully";
+    if (count <= *stock) {
+        *stock -= count;
+        cout << "\nBooks Bought Successfully";
         cout << "\nAmount: Rs. " << (*price) * count;
-    }
-    else
+    } else {
         cout << "\nRequired Copies not in Stock";
+    }
 }
 
-int main()
-{
+int main() {
     book *B[20];
-    int i = 0, r, t, choice;
+    int i = 0, t, choice;
     char titlebuy[20], authorbuy[20];
-    while (1)
-    {
+    while (1) {
         cout << "\n\n\t\tMENU"
              << "\n1. Entry of New Book"
              << "\n2. Buy Book"
@@ -106,8 +101,7 @@ int main()
              << "\n\nEnter your Choice: ";
         cin >> choice;
 
-        switch (choice)
-        {
+        switch (choice) {
         case 1:
             B[i] = new book;
             B[i]->feeddata();
@@ -120,29 +114,24 @@ int main()
             cin.getline(titlebuy, 20);
             cout << "Enter Author Of Book: ";
             cin.getline(authorbuy, 20);
-            for (t = 0; t < i; t++)
-            {
-                if (B[t]->search(titlebuy, authorbuy))
-                {
+            for (t = 0; t < i; t++) {
+                if (B[t]->search(titlebuy, authorbuy)) {
                     B[t]->buybook();
                     break;
                 }
             }
-            if (t == 1)
+            if (t == i)
                 cout << "\nThis Book is Not in Stock";
-
             break;
+
         case 3:
             cin.ignore();
             cout << "\nEnter Title Of Book: ";
             cin.getline(titlebuy, 20);
             cout << "Enter Author Of Book: ";
             cin.getline(authorbuy, 20);
-
-            for (t = 0; t < i; t++)
-            {
-                if (B[t]->search(titlebuy, authorbuy))
-                {
+            for (t = 0; t < i; t++) {
+                if (B[t]->search(titlebuy, authorbuy)) {
                     cout << "\nBook Found Successfully";
                     B[t]->showdata();
                     break;
@@ -158,11 +147,8 @@ int main()
             cin.getline(titlebuy, 20);
             cout << "Enter Author Of Book: ";
             cin.getline(authorbuy, 20);
-
-            for (t = 0; t < i; t++)
-            {
-                if (B[t]->search(titlebuy, authorbuy))
-                {
+            for (t = 0; t < i; t++) {
+                if (B[t]->search(titlebuy, authorbuy)) {
                     cout << "\nBook Found Successfully";
                     B[t]->editdata();
                     break;
@@ -173,7 +159,11 @@ int main()
             break;
 
         case 5:
+            for (int j = 0; j < i; j++) {
+                delete B[j];
+            }
             exit(0);
+
         default:
             cout << "\nInvalid Choice Entered";
         }
